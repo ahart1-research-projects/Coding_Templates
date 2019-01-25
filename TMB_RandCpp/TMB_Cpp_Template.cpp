@@ -19,9 +19,12 @@
     ///// Parameter section /////
     PARAMETER(dummy); // Include dummy variable to debug code without full estimation of likelihood
     //PARAMETER_VECTOR(parameter_vector_name); // Vector of estimated parameters
+    //PARAMETER(log_variable); // initial values should be log transformed, values maintained >= 0
+    //PARAMETER(logit_variable); // initial values should be logit transformed, values maintained between 0 and 1
     
     // Retransform variables so not in log space 
-    // Type local_variable1 = exp(log_variable1); 
+    // Type local_variable = exp(log_variable); // log transformation keeps parameter positive, exp() retransforms it
+    // Type local_variable = exp(logit_variable)/(1+exp(logit_variable)); // logit transformation keeps parameter between 0 to 1, inverse logit (this line) retransforms it
     
     // Local variables
     Type local_variable2; // single value variable which is NOT an integer
