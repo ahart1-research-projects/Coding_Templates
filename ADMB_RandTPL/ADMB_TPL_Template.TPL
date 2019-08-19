@@ -28,7 +28,7 @@ DATA_SECTION
 
    init_ivector DataIntegerVector(1,10); // Data integer vector
 
-   // Dummy Exampel Data
+   // Dummy Example Data
    init_int NData;
    init_vector x(1,NData);
    init_vector y(1,NData);
@@ -40,7 +40,8 @@ PARAMETER_SECTION
    // logit transformations keep values between 0 and 1
 
    // Estimated parameters (start with init_)
-   init_number logpar1; // Estimate parameter, a number
+   init_number logpar1; // Estimate parameter, a number, log transformed
+   init_number logitpar2; // Estimate parameter, a number, logit transformed
 
    ///// Global variables that aren't estimated
    number par1; // Parameter, a number, may be used to retransform log/logit transformed estimated parameters 
@@ -84,7 +85,9 @@ PROCEDURE_SECTION
 
    // Convert from log to normal space
    par1 = mfexp(logpar1);
-   // !!!!!!!! need logit transformation here also!!!!!!!!!
+
+   // Convert from logit to normal space
+   par2 = mfexp(logitpar2)/(1.0 + mfexp(logitpar2));
  
    // Loop over local variable Year from 1:10
    for (int Year=1;Year<=10;Year++){ 
@@ -92,7 +95,7 @@ PROCEDURE_SECTION
    }
 
    objfun = SumSquares;  
-   cout << SumSquares << endl; // Print to screen, no !! needed since C++ commands understood in PARAMETER_SECTION
+   cout << SumSquares << endl; // Print to screen, no !! needed since C++ commands understood in PROCEDURE_SECTION
 
 
    // Dummy Example Procedure 
@@ -121,12 +124,15 @@ REPORT_SECTION
  report << "print first parameter to in report with this message in .REP file" << par1 << endl;
 
  // If your code isn't working check the following
-   // Section headings must start at the margin
+   // Section headings must start at the margin, but code following section headings must be indented 1 or more spaces (usually 2)
    // Must have an objective_function_value
    // Ensure no int variables in PARAMETER_SECTION
    // Make sure everything is in bounds (weird errors if things aren't indexed correctly & stored in vectors/matrices of the correct size)
    // Ensure .DAT, .PIN, and .TPL files are in same (and current) working directory
    // Make sure previous .par, .std, and .cor files from previous runs have been deleted so that you can check that these are updated & reproduced after debugging
+   // ensure all lines end with ;
+   // Make sure estimated parameters aren't used in if statements or conditional statements, this could add a discontinutiy when you are trying to solve for the optimal parameter value
+   // Ensure local variables declared in advance and given starting value (often set to zero)
  
  // To run, type in ADMB terminal:
     // admb filename.TPL
