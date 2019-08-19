@@ -4,12 +4,14 @@ DATA_SECTION
    // Data read in from herringexample.DAT 
    init_int Nobs; // Number of observations
    init_vector fishCounts(1,Nobs); // Fish counts
-
+   init_vector fishMonth(1,Nobs); // Month in which fish counts took place
 
 PARAMETER_SECTION
   // Model parameters to estimate, global variables, real numbers and objective function (no int variables allowed)
 
-   init_number loglambda; // log Lambda parameter for Poisson distribution 
+   init_vector loglambda(1,3); // log Lambda parameter for Poisson distribution, vector of length 3 
+
+   vector predictvals(1,Nobs); // Predicted counts
    
  
   // Objective function
@@ -21,17 +23,30 @@ PROCEDURE_SECTION
    //cout << fishCounts << endl;
 
   
-   for(int iobs=1; iobs<=Nobs; iobs++){
-    obj_fun += -1.0*log_density_poisson(fishCounts(iobs), mfexp(loglambda));
-    // NO DOESNT WORK obj_fun += -1.0*log(dpois(fishCounts(iobs), mfexp(loglambda))); // negative log-likelihood for Poisson distribution
-   }
+  for(int iobs=1; iobs<=Nobs; iobs++){
+  if(fishMonth(iobs)==4){
+      predictvals(iobs) = mfexp(loglambda(1));
+    } else if(fishMonth(iobs) == 5){
+      predictvals(iobs) = mfexp(loglambda(2));
+    } else if (fishMonth(iobs)==6){
+      predictvals(iobs) = mfexp(loglambda(3));
+    }
+
+    obj_fun += -1.0*log_density_poisson(fishCounts(iobs), predictvals(iobs));
+  }
    
 
 REPORT_SECTION
    // Print to .REP file
  report << "loglambda" << loglambda << endl;
  report << "residuals" << endl;
- report << mfexp(loglambda) - fishCounts << endl;
+  report << predictvals - fishCounts << endl;
+ /*report << "residuals" << endl;
+ report << mfexp(loglambda(1)) - fishCounts << endl;*/
+ report << "predictions" << endl;
+ report << predictvals << endl;
+ report << "observations" << endl;
+ report <<  fishCounts << endl;
 
 
  // If your code isn't working check the following
