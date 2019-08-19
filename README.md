@@ -1,0 +1,2 @@
+# Coding_Templates
+This repository contains template files for developing fisheries models in Template Model Builder (TMB) and AD Model Builder (ADMB) and template R scripts to execute model files from R.  ADMB and TMB are both commonly used to build stock assessment models for fisheries management. All templates provided here reflect that use and emphasize syntax used in ADMB and TMB model files. 
